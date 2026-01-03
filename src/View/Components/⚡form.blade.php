@@ -1,5 +1,7 @@
 <?php
 
+namespace AllYouNeed\StatamicForms;
+
 use Livewire\Component;
 
 new class extends Component

@@ -1,6 +1,6 @@
 <?php
  
-namespace AllYouNeed\Forms;
+namespace AllYouNeed\StatamicForms;
  
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
