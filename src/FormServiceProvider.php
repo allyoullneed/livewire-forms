@@ -3,30 +3,49 @@
 namespace AllYouNeed\StatamicForms;
  
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Statamic\Providers\AddonServiceProvider;
 
 
+use AllYouNeed\StatamicForms\FieldTypes\Disclaimer;
+use AllYouNeed\StatamicForms\FieldTypes\Pin;
 
-final class FormServiceProvider extends ServiceProvider
+//use AllYouNeed\StatamicForms\View\Components\Form;
+
+final class FormServiceProvider extends AddonServiceProvider
 {
-    public function boot(): void
+
+    protected $vite = [ 
+        'input' => [
+            'resources/js/addon.js',
+            'resources/css/addon.css',
+        ],
+        'publicDirectory' => 'resources/dist',
+    ]; 
+
+
+    public function bootAddon(): void
     {
         if ($this->app->runningInConsole()) {
-        //     $this->commands(
-        //         commands: [
-        //             DataTransferObjectMakeCommand::class,
-        //         ],
-        //     );
         }
         else {
+            $this->registerFieldTypes();
             $this->registerComponents();
         }   
     }
+    public function registerFieldTypes()
+    {
+        Disclaimer::register(); Disclaimer::makeSelectableInForms();
+        Pin       ::register(); Pin       ::makeSelectableInForms();
+        
+    }
     public function registerComponents()
     {
+        $prefix = config('prefix');
+
+        // Livewire::component('form', Form::class);
         Livewire::addComponent(
-            'form',
+            'statamic-form',
             __DIR__ . '/View/Components/⚡form.blade.php'
         );
     }

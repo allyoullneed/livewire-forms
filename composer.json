@@ -22,6 +22,10 @@
         }
     },
     "extra": {
+        "statamic": {
+            "name": "Statamic Forms",
+            "description": "Livewire-powered forms for Statamic CMS"
+        },
         "laravel": {
             "providers": [
                 "AllYouNeed\\StatamicForms\\FormServiceProvider"
