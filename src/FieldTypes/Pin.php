@@ -45,33 +45,39 @@ class Pin extends Fieldtype
     protected function configFieldItems(): array
     {
         return [
-            'length' => [
-                'display' => 'Length',
-                'type' => 'integer',
-                'default' => '6',
-            ],
-            'mode' => [
-                'display' => 'Mode',
-                'instructions' => 'Choose which mode you want to use',
-                'type' => 'select',
-                'default' => 'regular',
-                'options' => [
-                    'regular' => __('Regular'),
-                    'numeric' => __('Numeric'),
+            [
+                'display' => __('Behavior'),
+                'instructions' => __('Tweak the behavior of the pin input'),
+                'fields' => [ 
+                    'length' => [
+                        'display' => 'Length',
+                        'type' => 'integer',
+                        'default' => '6',
+                    ],
+                    'mode' => [
+                        'display' => 'Mode',
+                        'instructions' => 'Choose which mode you want to use',
+                        'type' => 'select',
+                        'default' => 'regular',
+                        'options' => [
+                            'regular' => __('Regular'),
+                            'numeric' => __('Numeric'),
+                        ],
+                        'width' => 50
+                    ],
+                    'password' => [
+                        'display' => 'Hide input',
+                        'instructions' => 'Set the pin type to password to hide the input',
+                        'type' => 'toggle',
+                        'default' => false,
+                    ],
+                    'gaps' => [
+                        'display' => 'Gaps',
+                        'instructions' => 'Add gaps between input elements',
+                        'type' => 'toggle',
+                        'default' => true
+                    ],
                 ],
-                'width' => 50
-            ],
-            'password' => [
-                'display' => 'Hide input',
-                'instructions' => 'Set the pin type to password to hide the input',
-                'type' => 'toggle',
-                'default' => false,
-            ],
-            'gaps' => [
-                'display' => 'Gaps',
-                'instructions' => 'Add gaps between input elements',
-                'type' => 'toggle',
-                'default' => true
             ],
         ];
     }

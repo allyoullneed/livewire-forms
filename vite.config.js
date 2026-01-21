@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import statamic from '@statamic/cms/vite-plugin';
-import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
     plugins: [
@@ -10,8 +9,8 @@ export default defineConfig({
                 'resources/js/addon.js'
             ],
             publicDirectory: 'resources/dist',
+            hotFile: '/../resources/dist/hot'
         }),
         statamic(),
-        vue(),
     ],
 });

@@ -62,13 +62,16 @@ new class extends Component
     }
 };
 ?>
-
 <statamic:form:create :in="$in" class="flex flex-col gap-4">
     @if (isset($success))
         <x-alert type="success">
             {{ $success }}
         </x-alert>
     @else
+        <template x-for="$wire.$errors">
+            <span x-text="message"></span>
+        </template>
+
         @if (isset($errors) && !empty($errors))
             <x-alert type="error">
                 @foreach($errors as $error)
@@ -85,29 +88,18 @@ new class extends Component
                 </x-slot:title>
                 <x-slot class="grid grid-cols-6 lg:grid-cols-12 gap-3 items-start">
                     @foreach ($section['fields'] as $field)
-                        @if ($field['type'] == 'spacer')
-                        <div @class([
-                            'col-span-full' => $field['width'] == 100,
-                            'col-span-9'    => $field['width'] == 75,
-                            'col-span-8'    => $field['width'] == 66,
-                            'col-span-6'    => $field['width'] == 50,
-                            'col-span-4'    => $field['width'] == 33,
-                            'col-span-3'    => $field['width'] == 25
-                        ])/></div>
+                        @if (false /*$field['visibility'] == 'hidden'*/)
+                            <input type="hidden" name="{{ $field['handle'] }}" value="{{ $field['default'] }}"
+                                @class([
+                                    'col-span-full' => $field['width'] == 100,
+                                    'col-span-9'    => $field['width'] == 75,
+                                    'col-span-8'    => $field['width'] == 66,
+                                    'col-span-6'    => $field['width'] == 50,
+                                    'col-span-4'    => $field['width'] == 33,
+                                    'col-span-3'    => $field['width'] == 25
+                            ])/>
                         @else
-                            @if (false /*$field['visibility'] == 'hidden'*/)
-                                <input type="hidden" name="{{ $field['handle'] }}" value="{{ $field['default'] }}"
-                                    @class([
-                                        'col-span-full' => $field['width'] == 100,
-                                        'col-span-9'    => $field['width'] == 75,
-                                        'col-span-8'    => $field['width'] == 66,
-                                        'col-span-6'    => $field['width'] == 50,
-                                        'col-span-4'    => $field['width'] == 33,
-                                        'col-span-3'    => $field['width'] == 25
-                                ])/>
-                            @else
-                                {!! $field['field'] !!}
-                            @endif
+                            {!! $field['field'] !!}
                         @endif
                     @endforeach
                 </x-slot>
