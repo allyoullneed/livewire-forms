@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Statamic\Providers\AddonServiceProvider;
 
+use Statamic\Fieldtypes\Assets\Assets;
 use Statamic\Fieldtypes\Checkboxes;
 use Statamic\Fieldtypes\Files;
 use Statamic\Fieldtypes\Integer;
@@ -46,6 +47,7 @@ final class FormServiceProvider extends AddonServiceProvider
 
     public function extendStatamicFieldTypes() {
         foreach ([
+                Assets::class,
                 Checkboxes::class,
                 Files::class,
                 Integer::class,

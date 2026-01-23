@@ -25,6 +25,17 @@ new class extends Component
         $this->values        = $values;
         $this->splitSections = $splitSections;
         $this->strict        = $strict;
+
+        
+        $form = Form::find($this->in);
+        $fields = $form->blueprint()->fields()->all();
+
+        foreach ($fields as $field) {
+            if ($field->type() === 'checkboxes')
+                $this->values[$field->handle()] = [];
+            else if ($field->type() === 'select' && array_key_exists('multiple', $field->config()))
+                $this->values[$field->handle()] = [];
+        }        
     }
 
     public function eval() {
@@ -68,9 +79,9 @@ new class extends Component
             {{ $success }}
         </x-alert>
     @else
-        <template x-for="$wire.$errors">
+        <!--template x-for="$wire.$errors">
             <span x-text="message"></span>
-        </template>
+        </template-->
 
         @if (isset($errors) && !empty($errors))
             <x-alert type="error">
