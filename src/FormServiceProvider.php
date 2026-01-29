@@ -20,6 +20,8 @@ use Statamic\Fieldtypes\Toggle;
 use AllYouNeed\StatamicForms\FieldTypes\Disclaimer;
 use AllYouNeed\StatamicForms\FieldTypes\Pin;
 
+use AllYouNeed\StatamicForms\View\Components\Form;
+
 //use AllYouNeed\StatamicForms\View\Components\Form;
 
 final class FormServiceProvider extends AddonServiceProvider
@@ -119,9 +121,8 @@ final class FormServiceProvider extends AddonServiceProvider
     }
     public function registerComponents()
     {
-        $prefix = config('prefix');
+        Blade::component('render-form', Form::class);
 
-        // Livewire::component('form', Form::class);
         Livewire::addComponent(
             'statamic-form',
             __DIR__ . '/View/Components/⚡form.blade.php'
