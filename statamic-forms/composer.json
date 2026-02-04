@@ -1,0 +1,41 @@
+{
+    "name": "allyouneed/statamic-forms",
+    "description": "Tag for rendering Statamic forms dynamically, powered by Livewire 4",
+    "keywords": [
+        "statamic",
+        "cms",
+        "forms",
+        "laravel",
+        "livewire"
+    ],
+    "require": {
+        "livewire/livewire": "^4",
+        "illuminate/support": "^12"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4"
+    },
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "AllYouNeed\\StatamicForms\\": "src/"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Forms",
+            "description": "Livewire-powered forms for Statamic CMS"
+        },
+        "laravel": {
+            "providers": [
+                "AllYouNeed\\StatamicForms\\FormServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "beta",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
