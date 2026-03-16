@@ -1,0 +1,77 @@
+<?php return array (
+  'allyoullneed/seo' => 
+  array (
+    'id' => 'allyoullneed/seo',
+    'slug' => NULL,
+    'editions' => 
+    array (
+    ),
+    'version' => 'dev-main',
+    'raw_version' => 'dev-main',
+    'namespace' => 'AllYoullNeed\\Seo',
+    'autoload' => 'src',
+    'provider' => 'AllYoullNeed\\Seo\\SeoServiceProvider',
+    'name' => 'All Seo you need',
+    'url' => NULL,
+    'description' => 'Seo Addon',
+    'developer' => NULL,
+    'developerUrl' => NULL,
+    'email' => NULL,
+    'marketplaceId' => NULL,
+    'marketplaceSlug' => NULL,
+    'marketplaceUrl' => NULL,
+    'marketplaceSellerSlug' => NULL,
+    'isCommercial' => false,
+    'latestVersion' => NULL,
+  ),
+  'allyoullneed/statamic-forms' => 
+  array (
+    'id' => 'allyoullneed/statamic-forms',
+    'slug' => NULL,
+    'editions' => 
+    array (
+    ),
+    'version' => 'dev-main',
+    'raw_version' => 'dev-main',
+    'namespace' => 'AllYoullNeed\\StatamicForms',
+    'autoload' => 'src/',
+    'provider' => 'AllYoullNeed\\StatamicForms\\FormServiceProvider',
+    'name' => 'Statamic Forms',
+    'url' => NULL,
+    'description' => 'Livewire-powered forms for Statamic CMS',
+    'developer' => NULL,
+    'developerUrl' => NULL,
+    'email' => NULL,
+    'marketplaceId' => NULL,
+    'marketplaceSlug' => NULL,
+    'marketplaceUrl' => NULL,
+    'marketplaceSellerSlug' => NULL,
+    'isCommercial' => false,
+    'latestVersion' => NULL,
+  ),
+  'alt-design/alt-seo' => 
+  array (
+    'id' => 'alt-design/alt-seo',
+    'slug' => NULL,
+    'editions' => 
+    array (
+    ),
+    'version' => '1.4.0',
+    'raw_version' => 'v1.4.0',
+    'namespace' => 'AltDesign\\AltSeo',
+    'autoload' => 'src',
+    'provider' => 'AltDesign\\AltSeo\\ServiceProvider',
+    'name' => 'Alt Seo',
+    'url' => NULL,
+    'description' => 'Alt Seo addon',
+    'developer' => NULL,
+    'developerUrl' => NULL,
+    'email' => NULL,
+    'marketplaceId' => 636,
+    'marketplaceSlug' => 'alt-seo',
+    'marketplaceUrl' => 'https://statamic.com/addons/alt-design/alt-seo',
+    'marketplaceSellerSlug' => 'alt-design',
+    'isCommercial' => false,
+    'latestVersion' => '1.4.0',
+  ),
+);

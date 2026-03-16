@@ -1,0 +1,1 @@
+    <div <?php echo e($attributes->class(['radial-progress'])->style(['--value:' . $value])->merge()); ?> :aria-valuenow="$value" role="progressbar"><?php echo e($value); ?>%</div><?php /**PATH /var/www/allyouneed.local/storage/framework/views/416ef43a1aa097103a48d2b6399ae8db.blade.php ENDPATH**/ ?>
