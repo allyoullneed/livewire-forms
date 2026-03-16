@@ -1,6 +1,6 @@
 <?php
 
-namespace AllYouNeed\StatamicForms\View\Components;
+namespace AllYoullNeed\StatamicForms\View\Components;
 
 
 use Illuminate\View\Component;

@@ -1,1 +1,0 @@
-    <div {{ $attributes->class(['radial-progress'])->style(['--value:' . $value])->merge() }} :aria-valuenow="$value" role="progressbar">{{ $value }}%</div>
