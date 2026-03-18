@@ -73,6 +73,6 @@ new class extends Component
     }
 };
 ?>
-<statamic:form:create :in="$in" class="flex flex-col gap-4">
+<statamic:form:create :in="$in" :class="$attributes->class(['flex flex-col gap-4'])->get('class')">
 <x-render-form :sections="$sections" :success="$success" :errors="$errors"/>
 </statamic:form:create>

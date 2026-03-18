@@ -38,7 +38,7 @@ class Form extends Component
             @endif
             @foreach($sections as $section)
                 
-                <x-card class="bg-base-100 shadow-md">
+                <x-card class="border-1 border-base-300 bg-base-200">
                     <x-slot:title class="flex flex-col items-start">
                         {{ $section['display'] }}
                         <span class="text-base font-normal">{{ $section['instructions'] }}</span>
