@@ -38,7 +38,7 @@ class Form extends Component
             @endif
             @foreach($sections as $section)
                 
-                <x-card class="border-1 border-base-300 bg-base-200">
+                <x-card class="bg-base-200 border-1 border-base-300">
                     <x-slot:title class="flex flex-col items-start">
                         {{ $section['display'] }}
                         <span class="text-base font-normal">{{ $section['instructions'] }}</span>
@@ -63,10 +63,6 @@ class Form extends Component
                 </x-card>
             @endforeach
         @endif
-
-        <div class="bg-base-200 rounded-lg p-5 col-span-full flex justify-end">
-            <x-button class="btn btn-primary" wire:click.prevent="eval">{{ $submit_label ?? 'Submit' }}</x-button>
-        </div>
         HTML;
     }
 }

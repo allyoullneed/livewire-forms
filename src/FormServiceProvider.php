@@ -9,6 +9,7 @@ use Statamic\Providers\AddonServiceProvider;
 use Statamic\Fieldtypes\Assets\Assets;
 use Statamic\Fieldtypes\Checkboxes;
 use Statamic\Fieldtypes\Files;
+use Statamic\Fieldtypes\Icon;
 use Statamic\Fieldtypes\Integer;
 use Statamic\Fieldtypes\Radio;
 use Statamic\Fieldtypes\Select;
@@ -113,6 +114,7 @@ final class FormServiceProvider extends AddonServiceProvider
 
     public function registerFieldTypes()
     {
+        Icon::makeSelectableInForms();
         Disclaimer::register(); Disclaimer::makeSelectableInForms();
         Pin       ::register(); Pin       ::makeSelectableInForms();
         

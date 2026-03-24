@@ -27,18 +27,18 @@ new class extends Component
         $this->strict        = $strict;
 
         
-        $form = Form::find($this->in);
-        $fields = $form->blueprint()->fields()->all();
+        // $form = Form::find($this->in);
+        // $fields = $form->blueprint()->fields()->all();
 
-        foreach ($fields as $field) {
-            if ($field->type() === 'checkboxes')
-                $this->values[$field->handle()] = [];
-            else if ($field->type() === 'select' && array_key_exists('multiple', $field->config()))
-                $this->values[$field->handle()] = [];
-        }        
+        // foreach ($fields as $field) {
+        //     if ($field->type() === 'checkboxes')
+        //         $this->values[$field->handle()] = [];
+        //     else if ($field->type() === 'select' && array_key_exists('multiple', $field->config()))
+        //         $this->values[$field->handle()] = [];
+        // }        
     }
 
-    public function eval() {
+    public function submit() {
         $validation = [];
 
         $form = Form::find($this->in);
@@ -52,12 +52,19 @@ new class extends Component
 
             // $rules = $field?->rules() ? array_filter($field->rules()[$field->handle()], fn($rule) => $rule !== 'nullable') : [];
             $rules = $field?->rules() ? $field->rules()[$field->handle()] : [];
+            $rules = array_map(
+                fn ($r) => gettype($r) === 'object' ? (
+                        get_class($r) === 'Statamic\Fieldtypes\Assets\MimesRule' ? $r->toGqlValidationString() : ''
+                    ) : $r,
+                $rules
+            );
             if ($this->strict) {
                 if ($field?->required())
                     $rules[] = 'required';
             }
-            if (!empty($rules))
+            if (is_array($rules)) {                    
                 $validation['values.' . $field->handle()] = implode('|', $rules);
+            }
         }
         
         if ($this->validate($validation)) {
@@ -74,5 +81,9 @@ new class extends Component
 };
 ?>
 <statamic:form:create :in="$in" :class="$attributes->class(['flex flex-col gap-4'])->get('class')">
-<x-render-form :sections="$sections" :success="$success" :errors="$errors"/>
+    <x-render-form :sections="$sections" :success="$success" :errors="$errors"/>
+    
+    <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
+        <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
+    </div>
 </statamic:form:create>
