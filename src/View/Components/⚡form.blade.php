@@ -1,5 +1,7 @@
 <?php
 
+namespace AllYoullNeed\StatamicForms\View\Components;
+
 use Livewire\Component;
 use Statamic\Facades\Form;
 use Statamic\Fields\Tab;
@@ -38,10 +40,9 @@ new class extends Component
         // }        
     }
 
-    public function submit() {
+    protected function validationRules($form) {
         $validation = [];
 
-        $form = Form::find($this->in);
         $fields = $form->blueprint()->fields()->all();
 
         foreach ($fields as $field) {
@@ -66,6 +67,12 @@ new class extends Component
                 $validation['values.' . $field->handle()] = implode('|', $rules);
             }
         }
+        return $validation;
+    }
+
+    public function submit() {
+        $form = Form::find($this->in);
+        $validation = $this->validationRules($form);
         
         if ($this->validate($validation)) {
             $submitValues = [];

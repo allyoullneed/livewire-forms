@@ -1,6 +1,6 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
-import { Toggle } from '@statamic/cms/ui';
+import { ToggleItem } from '@statamic/cms/ui';
 
 const emit = defineEmits(Fieldtype.emits);
 const props = defineProps(Fieldtype.props);
@@ -9,5 +9,5 @@ defineExpose(expose);
 </script>
 
 <template>
-    <Toggle :model-value="value" @update:model-value="update" />
+    <ToggleItem :model-value="value" @update:model-value="update" />
 </template>

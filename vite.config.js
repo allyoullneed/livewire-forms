@@ -9,7 +9,6 @@ export default defineConfig({
                 'resources/js/addon.js'
             ],
             publicDirectory: 'resources/dist',
-            hotFile: '/../resources/dist/hot'
         }),
         statamic(),
     ],

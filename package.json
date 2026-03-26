@@ -6,7 +6,7 @@
         "build": "vite build"
     },
     "dependencies": {
-        "@statamic/cms": "file: ../../statamic/cms/resources/dist-package"
+        "@statamic/cms": "file:./vendor/statamic/cms/resources/dist-package"
     },
     "devDependencies": {
         "laravel-vite-plugin": "^1.2.0",
