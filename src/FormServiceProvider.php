@@ -8,6 +8,7 @@ use Statamic\Providers\AddonServiceProvider;
 
 use Statamic\Fieldtypes\Assets\Assets;
 use Statamic\Fieldtypes\Checkboxes;
+use Statamic\Fieldtypes\Dictionary;
 use Statamic\Fieldtypes\Files;
 use Statamic\Fieldtypes\Icon;
 use Statamic\Fieldtypes\Integer;
@@ -20,19 +21,20 @@ use Statamic\Fieldtypes\Toggle;
 
 use AllYoullNeed\StatamicForms\FieldTypes\Disclaimer;
 use AllYoullNeed\StatamicForms\FieldTypes\Pin;
+use AllYoullNeed\StatamicForms\FieldTypes\Rating;
 
 use AllYoullNeed\StatamicForms\View\Components\Form;
 
 final class FormServiceProvider extends AddonServiceProvider
 {
 
-    // protected $vite = [ 
-    //     'input' => [
-    //         'resources/js/addon.js',
-    //     ],
-    //     'publicDirectory' => 'resources/dist',
-    //     'hotFile' => __DIR__ . '/../resources/dist/hot',
-    // ]; 
+
+    protected $vite = [ 
+        'input' => [
+            'resources/js/addon.js',
+        ],
+        'publicDirectory' => 'resources/dist',
+    ]; 
 
 
     public function bootAddon(): void
@@ -43,13 +45,25 @@ final class FormServiceProvider extends AddonServiceProvider
             $this->extendStatamicFieldTypes();
             $this->registerFieldTypes();
             $this->registerComponents();
-        }   
+        }
     }
 
     public function extendStatamicFieldTypes() {
+        foreach([Dictionary::class, Select::class] as $fieldtype) {
+            $fieldtype::appendConfigFields([
+                'max_rows' => [
+                    'display' => __('Maximum shown rows'),
+                    'instructions' => __('Maximum number of rows used to show selected items (not the items in the dropdown)'),
+                    'type' => 'integer',
+                    'clearable' => 'false',
+                    'default' => 1
+                ], 
+            ]);
+        }
         foreach ([
                 Assets::class,
                 Checkboxes::class,
+                Dictionary::class,
                 Files::class,
                 Integer::class,
                 Radio::class,
@@ -117,6 +131,7 @@ final class FormServiceProvider extends AddonServiceProvider
         Icon::makeSelectableInForms();
         Disclaimer::register(); Disclaimer::makeSelectableInForms();
         Pin       ::register(); Pin       ::makeSelectableInForms();
+        Rating    ::register(); Rating    ::makeSelectableInForms();
         
     }
     public function registerComponents()
