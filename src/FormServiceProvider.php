@@ -1,6 +1,6 @@
 <?php
  
-namespace AllYoullNeed\StatamicForms;
+namespace AllYoullNeed\LivewireForms;
  
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
@@ -19,11 +19,11 @@ use Statamic\Fieldtypes\TextArea;
 use Statamic\Fieldtypes\Toggle;
 
 
-use AllYoullNeed\StatamicForms\FieldTypes\Disclaimer;
-use AllYoullNeed\StatamicForms\FieldTypes\Pin;
-use AllYoullNeed\StatamicForms\FieldTypes\Rating;
+use AllYoullNeed\LivewireForms\FieldTypes\Disclaimer;
+use AllYoullNeed\LivewireForms\FieldTypes\Pin;
+use AllYoullNeed\LivewireForms\FieldTypes\Rating;
 
-use AllYoullNeed\StatamicForms\View\Components\Form;
+use AllYoullNeed\LivewireForms\View\Components\Form;
 
 final class FormServiceProvider extends AddonServiceProvider
 {
@@ -139,7 +139,7 @@ final class FormServiceProvider extends AddonServiceProvider
         Blade::component('render-form', Form::class);
 
         Livewire::addComponent(
-            'statamic-form',
+            config('livewire-forms.tag', 'statamic-form'),
             __DIR__ . '/View/Components/⚡form.blade.php'
         );
     }

@@ -1,5 +1,5 @@
 {
-    "name": "allyoullneed/statamic-forms",
+    "name": "allyoullneed/livewire-forms",
     "description": "Tag for rendering Statamic forms dynamically, powered by Livewire 4",
     "keywords": [
         "statamic",
@@ -18,7 +18,7 @@
     "license": "proprietary",
     "autoload": {
         "psr-4": {
-            "AllYoullNeed\\StatamicForms\\": "src/"
+            "AllYoullNeed\\LivewireForms\\": "src/"
         }
     },
     "extra": {
@@ -29,7 +29,7 @@
         
         "laravel": {
             "providers": [
-                "AllYoullNeed\\StatamicForms\\FormServiceProvider"
+                "AllYoullNeed\\LivewireForms\\FormServiceProvider"
             ]
         }
     },

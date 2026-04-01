@@ -1,6 +1,6 @@
 <?php
 
-namespace AllYoullNeed\StatamicForms\View\Components;
+namespace AllYoullNeed\LivewireForms\View\Components;
 
 use Livewire\Component;
 use Statamic\Facades\Form;
@@ -24,7 +24,7 @@ new class extends Component
         if ($defaultValues === 'prefill' || $defaultValues === 'submit' || $defaultValues === 'both')
             $this->defaultValues = $defaultValues;
         else
-            $this->defaultValues = config('statamic-forms.default-values');
+            $this->defaultValues = config('livewire-forms.default-values');
     }
 
     public function mount(
@@ -108,11 +108,11 @@ new class extends Component
             $submission->data($this->values);
             $submission->save();
 
-            if (config('statamic-forms.on-submit') == 'refresh')
+            if (config('livewire-forms.on-submit') == 'refresh')
                 $this->success = __('Submission successful.');
-            else if (config('statamic-forms.on-submit') == 'toast')
+            else if (config('livewire-forms.on-submit') == 'toast')
                 $this->dispatch(
-                    config('statamic-forms.listen-to') ?? 'notify',
+                    config('livewire-forms.listen-to') ?? 'notify',
                     type: 'success',
                     title: 'Success!',
                     message: __('Submission successful.')

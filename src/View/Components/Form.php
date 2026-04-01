@@ -1,6 +1,6 @@
 <?php
 
-namespace AllYoullNeed\StatamicForms\View\Components;
+namespace AllYoullNeed\LivewireForms\View\Components;
 
 
 use Illuminate\View\Component;

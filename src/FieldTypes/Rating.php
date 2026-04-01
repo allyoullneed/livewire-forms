@@ -1,6 +1,6 @@
 <?php
 
-namespace AllYoullNeed\StatamicForms\Fieldtypes;
+namespace AllYoullNeed\LivewireForms\Fieldtypes;
 
 use Statamic\Fields\Fieldtype;
 
