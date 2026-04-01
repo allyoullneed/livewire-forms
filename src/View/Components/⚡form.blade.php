@@ -81,6 +81,8 @@ new class extends Component
             else if ($field->type() === 'checkboxes' ||
                 ($field->type() === 'select' && array_key_exists('multiple', $field->config())))
                 $this->values[$field->handle()] = [];
+            else
+                $this->values[$field->handle()] = null;
         }
     }
 
@@ -118,6 +120,7 @@ new class extends Component
                     message: __('Submission successful.')
                 );
             $this->values = [];
+            $this->initValues($form);
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($this->defaultValues === 'submit' || $this->defaultValues === 'both') {
                 foreach ($cache as $handle => $value) {
