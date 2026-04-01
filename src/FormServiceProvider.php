@@ -40,12 +40,25 @@ final class FormServiceProvider extends AddonServiceProvider
     public function bootAddon(): void
     {
         if ($this->app->runningInConsole()) {
+            $this->console();
         }
         else {
             $this->extendStatamicFieldTypes();
             $this->registerFieldTypes();
             $this->registerComponents();
         }
+    }
+
+    protected function console(): void
+    {
+        // Publishing the configuration file.
+        $this->publishes([
+            __DIR__ . '/../config/livewire-forms.php' => config_path('livewire-forms.php'),
+        ], 'livewire-forms-config');
+
+        $this->publishes([
+            __DIR__ . '/fields' => resource_path('views/vendor/statamic/fields'),
+        ], 'livewire-forms-fields');
     }
 
     public function extendStatamicFieldTypes() {
@@ -142,5 +155,10 @@ final class FormServiceProvider extends AddonServiceProvider
             config('livewire-forms.tag', 'statamic-form'),
             __DIR__ . '/View/Components/⚡form.blade.php'
         );
+    }
+
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/livewire-forms.php', 'livewire-forms');
     }
 }
