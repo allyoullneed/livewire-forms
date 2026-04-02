@@ -57,7 +57,7 @@ final class FormServiceProvider extends AddonServiceProvider
         ], 'livewire-forms-config');
 
         $this->publishes([
-            __DIR__ . '/fields' => resource_path('views/vendor/statamic/fields'),
+            __DIR__ . '/fields' => resource_path('views/vendor/statamic/forms/fields'),
         ], 'livewire-forms-fields');
     }
 
