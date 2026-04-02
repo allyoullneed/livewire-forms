@@ -105,19 +105,20 @@ new class extends Component
         }
         
         try {
-            $this->validate($validation);
-            $submission = FormSubmission::make()->form($form);
-            $submission->data($this->values);
-            $submission->save();
+            $field_names = [];
+            foreach ($this->fields($form) as $handle => $field) {
+                $field_names['values.' . $handle] = $field->display();
+            }
+            $this->validate($validation, [], $field_names);
 
             if (config('livewire-forms.on-submit') == 'refresh')
-                $this->success = __('Submission successful.');
+                $this->success = __('Submission successful<br/>Note: this is a mock form, nothing has been saved.');
             else if (config('livewire-forms.on-submit') == 'toast')
                 $this->dispatch(
                     config('livewire-forms.listen-to') ?? 'notify',
                     type: 'success',
                     title: 'Success!',
-                    message: __('Submission successful.')
+                    message: __('Submission successful<br/>Note: this is a mock form, nothing has been saved.')
                 );
             $this->values = [];
             $this->initValues($form);
