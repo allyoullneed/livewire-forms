@@ -18,6 +18,7 @@
     :maxlength="isset($maxlength) ? $maxlength : null"
     wire:model="values.{{ $handle }}"
     @class([
+        '[&>label]:order-last' => $instructions_position === 'above',
         'col-span-full' => $width == 100,
         'col-span-9'    => $width == 75,
         'col-span-8'    => $width == 66,

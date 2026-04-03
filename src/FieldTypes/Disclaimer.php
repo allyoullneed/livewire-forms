@@ -43,7 +43,7 @@ class Disclaimer extends Toggle
     protected function configFieldItems(): array
     {
         $defaultCode = <<<'CODE'
-                        <div class="btn btn-ghost" onClick="modal_{{ $handle }}.showModal()">Show</div>
+                        <div class="cursor-pointer" onClick="modal_{{ $handle }}.showModal()">Show</div>
                         <x-modal id="modal_{{ $handle }}">
                           <x-card class="[&>div]:overflow-auto prose lg:prose-2xl min-w-100 max-w-[90vw] max-h-[80vh] bg-base-100">
                           <x-slot:title>
