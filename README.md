@@ -1,6 +1,6 @@
 # All you'll need - Livewire forms for Statamic
 
-Render your forms in 1 line of code, with powerful components and 
+Render your forms in 1 line of code, with powerful components and a Livewire-powered backend.
 
 ## From Blueprints directly into the front end
 
