@@ -133,9 +133,9 @@ new class extends Component
 
         $this->validate($this->validationRules($form, $this->tabs), [], $this->fieldNames($form));
 
-        $index = array_search($this->tab, $this->sections);
-        if ($index < count($this->sections) - 1)
-            $this->tab = $this->sections[$index + 1];
+        $index = array_search($this->tab, array_map(fn($s) => $s->display(), $sections->all()));
+        if ($index < count($sections) - 1)
+            $this->tab = $sections[$index + 1]->display();
     }
 
     public function submit() {
@@ -197,7 +197,7 @@ new class extends Component
         </x-alert>
     @elseif ($wizard)
         <x-tabs>
-            @foreach (array_values(array_filter($sections, fn($s) => in_array($s['display'], $this->sections))) as $index => $section)
+            @foreach ($sections as $index => $section)
             @if ($index > 0)
             <span class="rtl:hidden tab pointer-events-none">&gt;</span>
             <span class="ltr:hidden tab pointer-events-none">&lt;</span>
@@ -210,7 +210,7 @@ new class extends Component
 
                     <x-render-form :sections="[$section]"/>
                     <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
-                        @if ($section !== array_last(array_filter($sections, fn($s) => in_array($s['display'], $this->sections))))
+                        @if ($section !== array_last($sections))
                         <x-button class="btn btn-primary" wire:click.prevent="next">Next</x-button>
                         @else
                         <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
