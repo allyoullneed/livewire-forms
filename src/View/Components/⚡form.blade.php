@@ -9,14 +9,17 @@ use Statamic\Facades\FormSubmission;
 
 new class extends Component
 {
-    public string $in;
-    public array $sections;
-    public bool $splitSections;
-    public bool $strict;
+    public string  $in;
+    public bool    $wizard;
+    public array   $sections;
+    public bool    $strict;
     public ?string $success = null;
-    public string $defaultValues;
+    public string  $defaultValues;
+    public array $tabs = [];
+    public ?string $tab = null;
 
     public array $values = [];
+
 
     public function __construct(
         ?string $defaultValues = null
@@ -28,30 +31,77 @@ new class extends Component
     }
 
     public function mount(
-        string $in,
-        array $sections = [],
-        array $values = [],
-        ?bool $splitSections = true,
-        ?bool $strict = false,
-        ?string $success = null,
+        string  $in,
+        bool    $wizard   = false,
+        array   $sections = [],
+        array   $values   = [],
+        ?bool   $strict   = false,
+        ?string $success  = null,
     ) {
         $this->in            = $in;
+        $this->wizard        = $wizard;
         $this->sections      = $sections;
         $this->values        = $values;
-        $this->splitSections = $splitSections;
         $this->strict        = $strict;
         $this->success       = $success;
         
         $form = Form::find($this->in);
+        if ($wizard)
+            $this->tab = $this->sections($form)->first()->display();
         $this->initValues($form);
     }
 
-    protected function validationRules($form) {
+    protected function initValues($form) {
+        $this->values = []; 
+        foreach ($this->fields($form) as $field) {
+            if (($this->defaultValues === 'prefill' || $this->defaultValues === 'both') && isset($field->config()['default']))
+                $this->values[$field->handle()] = $field->config()['default'];
+            else if ($field->type() === 'checkboxes' ||
+                ($field->type() === 'select' && array_key_exists('multiple', $field->config())))
+                $this->values[$field->handle()] = [];
+        }
+    }
+
+    protected function sections($form) {
+        $sections = $form->blueprint()->tabs()->first()->sections();
+        if ($this->sections != [])
+            $sections = $sections->filter(fn($s) => in_array($s->display(), $this->sections))->values();
+        return $sections;
+    }
+
+    protected function fields($form, $sections = null) {
+        if ($sections) {
+            $activeSections = array_filter(
+                $form->blueprint()->tabs()->first()->sections()->all(),
+                fn($section) => in_array($section->display(), $sections)
+            );
+            $activeFields = array_reduce(
+                array_map(fn($section) => $section->fields()->all()->toArray(), $activeSections),
+                'array_merge',
+                []
+            );
+            $activeFieldsNames = array_map(fn($field) => $field['handle'], $activeFields);
+            
+            return $form->blueprint()->fields()->all()->filter(
+                fn ($field) => in_array($field->handle(), $activeFieldsNames)
+            );
+        }
+        else
+            return $form->blueprint()->fields()->all();
+    }
+    
+    protected function fieldNames($form) {
+        $field_names = [];
+        foreach ($this->fields($form) as $handle => $field) {
+            $field_names['values.' . $handle] = $field->display();
+        }
+        return $field_names;
+    }
+
+    protected function validationRules($form, $sections = null) {
         $validation = [];
 
-        $fields = $form->blueprint()->fields()->all();
-
-        foreach ($fields as $field) {
+        foreach ($this->fields($form, $sections) as $field) {
             if ($field->type() === 'toggle')
                 $this->values[$field->handle()] = $this->values[$field->handle()] ?? false;
 
@@ -73,31 +123,32 @@ new class extends Component
         return $validation;
     }
 
-    protected function initValues($form) {
-        $this->values = [];
-        foreach ($this->fields($form) as $field) {
-            if (($this->defaultValues === 'prefill' || $this->defaultValues === 'both') && isset($field->config()['default']))
-                $this->values[$field->handle()] = $field->config()['default'];
-            else if ($field->type() === 'checkboxes' ||
-                ($field->type() === 'select' && array_key_exists('multiple', $field->config())))
-                $this->values[$field->handle()] = [];
-            else
-                $this->values[$field->handle()] = null;
-        }
-    }
 
-    protected function fields($form) {
-        return $form->fields()->all();
+    public function next() {
+        $form = Form::find($this->in);
+        $sections = $this->sections($form);
+
+        if (!in_array($this->tab, $this->tabs))
+            array_push($this->tabs, $this->tab);
+
+        $this->validate($this->validationRules($form, $this->tabs), [], $this->fieldNames($form));
+
+        $index = array_search($this->tab, $this->sections);
+        if ($index < count($this->sections) - 1)
+            $this->tab = $this->sections[$index + 1];
     }
 
     public function submit() {
+        if ($this->wizard)
+            array_push($this->tabs, $this->tab);
+
         $form = Form::find($this->in);
-        $validation = $this->validationRules($form);
+        $validation = $this->validationRules($form, $this->tabs);
 
         $cache = [];
         if ($this->defaultValues === 'submit' || $this->defaultValues === 'both') {
             foreach ($this->fields($form) as $field) {
-                if ((!array_key_exists($field->handle(), $this->values) || !$this->values[$field->handle()]) && isset($field->config()['default'])) {
+                if ((!array_key_exists($field->handle(), $this->values) || $this->values[$field->handle()] === null) && isset($field->config()['default'])) {
                     array_push($cache, $field->handle());
                     $this->values[$field->handle()] = $field->config()['default'];
                 }
@@ -105,25 +156,26 @@ new class extends Component
         }
         
         try {
-            $field_names = [];
-            foreach ($this->fields($form) as $handle => $field) {
-                $field_names['values.' . $handle] = $field->display();
-            }
-            $this->validate($validation, [], $field_names);
+            $this->validate($validation, [], $this->fieldNames($form));
 
             $submission = FormSubmission::make()->form($form);
             $submission->data($this->values);
             $submission->save();
 
             if (config('livewire-forms.on-submit') == 'refresh')
-                $this->success = __('Submission successful');
-            else if (config('livewire-forms.on-submit') == 'toast')
+                $this->success = _('Submission successful');
+            else if (config('livewire-forms.on-submit') == 'toast') {
                 $this->dispatch(
                     config('livewire-forms.listen-to') ?? 'notify',
                     type: 'success',
-                    title: 'Success!',
-                    message: __('Submission successful')
+                    title: _('Success') . '!',
+                    message: _('Submission successful')
                 );
+                if ($this->wizard) {
+                    $this->tab=$this->tabs[0];
+                    $this->tabs = [];
+                }
+            }
             $this->values = [];
             $this->initValues($form);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -137,10 +189,46 @@ new class extends Component
     }
 };
 ?>
+
 <statamic:form:create :in="$in" :class="$attributes->class(['flex flex-col gap-4'])->get('class')">
-    <x-render-form :sections="$sections" :success="$success" :errors="$errors"/>
-    
-    <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
-        <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
-    </div>
+    @if ($this->success)
+        <x-alert type="success">
+            {!! $this->success !!}
+        </x-alert>
+    @elseif ($wizard)
+        <x-tabs>
+            @foreach (array_values(array_filter($sections, fn($s) => in_array($s['display'], $this->sections))) as $index => $section)
+            @if ($index > 0)
+            <span class="rtl:hidden tab pointer-events-none">&gt;</span>
+            <span class="ltr:hidden tab pointer-events-none">&lt;</span>
+            @endif
+            <x-tab wire:model="tab" value="{{ $section['display'] }}">
+                <div class="flex flex-col gap-4">
+                    <x-slot:label @class([
+                        'pointer-events-none' => !in_array($section['display'], $this->tabs)
+                    ])>{{ $section['display'] }}</x-slot:label>
+
+                    <x-render-form :sections="[$section]"/>
+                    <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
+                        @if ($section !== array_last(array_filter($sections, fn($s) => in_array($s['display'], $this->sections))))
+                        <x-button class="btn btn-primary" wire:click.prevent="next">Next</x-button>
+                        @else
+                        <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
+                        @endif
+                    </div>
+                </div>
+            </x-tab>
+            @endforeach
+        </x-tabs>
+    @else
+        <x-render-form :sections="array_filter($sections, fn($s) => in_array($s['display'], $this->sections))"/>
+        
+        <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
+            <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
+        </div>
+    @endif
+
+    @if (config('livewire-forms.on-submit') === 'toast' && config('livewire-forms.add-toast'))
+        <x-toast @class([config('livewire-forms.toast-class')]) :listen-to="config('livewire-forms.listen-to')"/>
+    @endif
 </statamic:form:create>
