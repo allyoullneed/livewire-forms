@@ -9,6 +9,7 @@
         "livewire"
     ],
     "require": {
+        "allyoullneed/advanced-controls": "^1.0.6",
         "livewire/livewire": "^4",
         "illuminate/support": "^12"
     },
