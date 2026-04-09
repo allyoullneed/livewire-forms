@@ -202,8 +202,8 @@ new class extends Component
         <x-tabs>
             @foreach ($sections as $index => $section)
             @if ($index > 0)
-            <span class="rtl:hidden tab pointer-events-none">&gt;</span>
-            <span class="ltr:hidden tab pointer-events-none">&lt;</span>
+            <span class="rtl:hidden tab pointer-events-none px-0">&gt;</span>
+            <span class="ltr:hidden tab pointer-events-none px-0">&lt;</span>
             @endif
             <x-tab wire:model="tab" value="{{ $section['display'] }}">
                 <div class="flex flex-col gap-4">
