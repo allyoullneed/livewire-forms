@@ -32,7 +32,7 @@ return [
      *             This looks identical to how Statamic forms work. This is the default.
      *  - toast: A toast message is displayed to the screen.
      */
-    'on-submit' => 'toast',
+    'on-submit' => 'refresh',
 
     /**
      * Event type the form will emit and that the toast must listen to.
