@@ -46,8 +46,10 @@ new class extends Component
         $this->success       = $success;
         
         $form = Form::find($this->in);
-        if ($wizard)
+        if ($wizard) {
             $this->tab = $this->sections($form)->first()->display();
+            $this->tabs = [$this->tab];
+        }
         $this->initValues($form);
     }
 
@@ -128,14 +130,15 @@ new class extends Component
         $form = Form::find($this->in);
         $sections = $this->sections($form);
 
-        if (!in_array($this->tab, $this->tabs))
-            array_push($this->tabs, $this->tab);
 
         $this->validate($this->validationRules($form, $this->tabs), [], $this->fieldNames($form));
 
         $index = array_search($this->tab, array_map(fn($s) => $s->display(), $sections->all()));
         if ($index < count($sections) - 1)
             $this->tab = $sections[$index + 1]->display();
+
+        if (!in_array($this->tab, $this->tabs))
+            array_push($this->tabs, $this->tab);
     }
 
     public function submit() {
