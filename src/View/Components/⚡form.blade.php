@@ -221,7 +221,7 @@ new class extends Component
             @endforeach
         </x-tabs>
     @else
-        <x-render-form :sections="array_filter($sections, fn($s) => in_array($s['display'], $this->sections))"/>
+        <x-render-form :sections="$sections"/>
         
         <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
             <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
