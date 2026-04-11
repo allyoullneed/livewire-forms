@@ -39,13 +39,13 @@ final class FormServiceProvider extends AddonServiceProvider
 
     public function bootAddon(): void
     {
+        $this->registerComponents();
         if ($this->app->runningInConsole()) {
             $this->console();
         }
         else {
             $this->extendStatamicFieldTypes();
             $this->registerFieldTypes();
-            $this->registerComponents();
         }
     }
 
