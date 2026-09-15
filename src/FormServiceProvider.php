@@ -15,7 +15,7 @@ use Statamic\Fieldtypes\Integer;
 use Statamic\Fieldtypes\Radio;
 use Statamic\Fieldtypes\Select;
 use Statamic\Fieldtypes\Text;
-use Statamic\Fieldtypes\TextArea;
+use Statamic\Fieldtypes\Textarea;
 use Statamic\Fieldtypes\Toggle;
 
 
@@ -27,8 +27,6 @@ use AllYoullNeed\LivewireForms\View\Components\Form;
 
 final class FormServiceProvider extends AddonServiceProvider
 {
-
-
     protected $vite = [ 
         'input' => [
             'resources/js/addon.js',
@@ -82,7 +80,7 @@ final class FormServiceProvider extends AddonServiceProvider
                 Radio::class,
                 Select::class,
                 Text::class,
-                TextArea::class,
+                Textarea::class,
                 Toggle::class,
                 Disclaimer::class,
                 Pin::class
