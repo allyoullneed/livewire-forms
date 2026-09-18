@@ -11,7 +11,7 @@
     "require": {
         "allyoullneed/advanced-controls": "^1.0.6",
         "livewire/livewire": "^4",
-        "illuminate/support": "^12"
+        "illuminate/support": "^11|^12|^13"
     },
     "require-dev": {
         "pestphp/pest": "^4"
