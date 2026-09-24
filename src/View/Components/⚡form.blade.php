@@ -12,6 +12,7 @@ new class extends Component
     public string  $in;
     public bool    $wizard;
     public array   $sections;
+    public bool    $renderHidden = true;
     public bool    $strict;
     public ?string $success = null;
     public string  $defaultValues;
@@ -211,7 +212,7 @@ new class extends Component
                         'pointer-events-none' => !in_array($section['display'], $this->tabs)
                     ])>{{ $section['display'] }}</x-slot:label>
 
-                    <x-render-form :sections="[$section]"/>
+                    <x-render-form :sections="[$section]" :render-hidden="$renderHidden"/>
                     <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
                         @if ($section !== array_last($sections))
                         <x-button class="btn btn-primary" wire:click.prevent="next">Next</x-button>
@@ -224,7 +225,7 @@ new class extends Component
             @endforeach
         </x-tabs>
     @else
-        <x-render-form :sections="$sections"/>
+        <x-render-form :sections="$sections" :render-hidden="$renderHidden"/>
         
         <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
             <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
