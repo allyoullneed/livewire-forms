@@ -2,7 +2,11 @@
 
 namespace AllYoullNeed\LivewireForms\View\Components;
 
+use Illuminate\Support\Str;
+
 use Livewire\Component;
+
+use Statamic\Events\FormSubmitted;
 use Statamic\Facades\Form;
 use Statamic\Fields\Tab;
 use Statamic\Facades\FormSubmission;
@@ -16,10 +20,15 @@ new class extends Component
     public bool    $strict;
     public ?string $success = null;
     public string  $defaultValues;
-    public array $tabs = [];
+    public array   $tabs = [];
     public ?string $tab = null;
 
-    public array $values = [];
+    public string  $submit_label = "Submit";
+    public ?string $onSubmit = null;
+    public ?string $submissionId = null;
+    public bool    $resetAfterSubmit = true;
+
+    public array   $values = [];
 
 
     public function __construct(
@@ -55,7 +64,6 @@ new class extends Component
     }
 
     protected function initValues($form) {
-        $this->values = []; 
         foreach ($this->fields($form) as $field) {
             if (($this->defaultValues === 'prefill' || $this->defaultValues === 'both') && isset($field->config()['default']))
                 $this->values[$field->handle()] = $field->config()['default'];
@@ -145,7 +153,7 @@ new class extends Component
     public function submit() {
         if ($this->wizard)
             array_push($this->tabs, $this->tab);
-
+        
         $form = Form::find($this->in);
         $validation = $this->validationRules($form, $this->tabs);
 
@@ -162,13 +170,32 @@ new class extends Component
         try {
             $this->validate($validation, [], $this->fieldNames($form));
 
-            $submission = FormSubmission::make()->form($form);
-            $submission->data($this->values);
-            $submission->save();
+            $submission = null;
 
-            if (config('livewire-forms.on-submit') == 'refresh')
+            if ($this->submissionId) {
+                $submission = $form->submission($this->submissionId);
+
+                if ($submission) {
+                    foreach ($submission->fields() as $field_id => $field) {
+                        if (array_key_exists($field_id, $this->values))
+                            $submission->set($field_id, $this->values[$field_id]);
+                        else
+                            $submission->set($field_id, null);
+                    }
+                }
+            } else {
+                $submission = FormSubmission::make()->form($form);
+                $submission->data($this->values);
+            }
+            
+            $submission->save();
+            $this->submissionId = $submission->id();
+            FormSubmitted::dispatch($submission);
+            $this->dispatch('form-submitted', values: $this->values, submission: $this->submissionId);
+
+            if (($this->onSubmit ?? config('livewire-forms.on-submit')) == 'refresh')
                 $this->success = _('Submission successful');
-            else if (config('livewire-forms.on-submit') == 'toast') {
+            else if (($this->onSubmit ?? config('livewire-forms.on-submit')) == 'toast') {
                 $this->dispatch(
                     config('livewire-forms.listen-to') ?? 'notify',
                     type: 'success',
@@ -180,8 +207,13 @@ new class extends Component
                     $this->tabs = [];
                 }
             }
-            $this->values = [];
-            $this->initValues($form);
+            else
+                $this->js($this->onSubmit);
+
+            if ($this->resetAfterSubmit) {
+                $this->values = [];
+                $this->initValues($form);
+            }
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($this->defaultValues === 'submit' || $this->defaultValues === 'both') {
                 foreach ($cache as $handle => $value) {
@@ -211,7 +243,6 @@ new class extends Component
                     <x-slot:label @class([
                         'pointer-events-none' => !in_array($section['display'], $this->tabs)
                     ])>{{ $section['display'] }}</x-slot:label>
-
                     <x-render-form :sections="[$section]" :render-hidden="$renderHidden"/>
                     <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
                         @if ($section !== array_last($sections))
