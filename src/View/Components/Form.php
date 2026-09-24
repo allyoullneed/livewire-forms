@@ -9,6 +9,7 @@ class Form extends Component
 {
     public function __construct(
         public array $sections = [],
+        public bool $renderHidden = true
     ) {
     }
 
@@ -24,7 +25,7 @@ class Form extends Component
                 </x-slot:title>
                 <x-slot class="grid grid-cols-6 lg:grid-cols-12 gap-3 items-start">
                     @foreach ($section['fields'] as $field)
-                        @if (false /*$field['visibility'] == 'hidden'*/)
+                        @if ($field['visibility'] == 'hidden' && $renderHidden)
                             <input type="hidden" name="{{ $field['handle'] }}" value="{{ $field['default'] }}"
                                 @class([
                                     'col-span-full' => $field['width'] == 100,
@@ -34,7 +35,7 @@ class Form extends Component
                                     'col-span-4'    => $field['width'] == 33,
                                     'col-span-3'    => $field['width'] == 25
                             ])/>
-                        @else
+                        @elseif ($field['visibility'] != 'hidden')
                             {!! $field['field'] !!}
                         @endif
                     @endforeach
