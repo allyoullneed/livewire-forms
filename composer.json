@@ -9,7 +9,7 @@
         "livewire"
     ],
     "require": {
-        "allyoullneed/advanced-controls": "^1.0.6",
+        "allyoullneed/advanced-controls": "^1|^2",
         "livewire/livewire": "^4",
         "illuminate/support": "^11|^12|^13"
     },
@@ -34,7 +34,7 @@
             ]
         }
     },
-    "minimum-stability": "beta",
+    "minimum-stability": "dev",
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true
