@@ -23,7 +23,8 @@ new class extends Component
     public array   $tabs = [];
     public ?string $tab = null;
 
-    public string  $submit_label = "Submit";
+    public string  $nextLabel;
+    public string  $submitLabel;
     public ?string $onSubmit = null;
     public ?string $submissionId = null;
     public bool    $resetAfterSubmit = true;
@@ -42,11 +43,13 @@ new class extends Component
 
     public function mount(
         string  $in,
-        bool    $wizard   = false,
-        array   $sections = [],
-        array   $values   = [],
-        ?bool   $strict   = false,
-        ?string $success  = null,
+        bool    $wizard      = false,
+        array   $sections    = [],
+        array   $values      = [],
+        ?bool   $strict      = false,
+        ?string $success     = null,
+        ?string $nextLabel   = null,
+        ?string $submitLabel = null,
     ) {
         $this->in            = $in;
         $this->wizard        = $wizard;
@@ -54,10 +57,16 @@ new class extends Component
         $this->values        = $values;
         $this->strict        = $strict;
         $this->success       = $success;
-        
+
+        $this->nextLabel     = $nextLabel ?? config('livewire-forms.next-label') ?? _('Next');
+        $this->submitLabel   = $submitLabel ?? config('livewire-forms.submit-label') ?? _('Submit');
+
         $form = Form::find($this->in);
         if ($wizard) {
-            $this->tab = $this->sections($form)->first()->display();
+            if ($sections)
+                $this->tab = $sections[0];
+            else
+                $this->tab = $form->blueprint()->tabs()->first()->sections()->first()->display();
             $this->tabs = [$this->tab];
         }
         $this->initValues($form);
@@ -67,17 +76,10 @@ new class extends Component
         foreach ($this->fields($form) as $field) {
             if (($this->defaultValues === 'prefill' || $this->defaultValues === 'both') && isset($field->config()['default']))
                 $this->values[$field->handle()] = $field->config()['default'];
-            else if ($field->type() === 'checkboxes' ||
-                ($field->type() === 'select' && array_key_exists('multiple', $field->config())))
+            else if (!array_key_exists($field->handle(), $this->values) && ($field->type() === 'checkboxes' ||
+                ($field->type() === 'select' && array_key_exists('multiple', $field->config()))))
                 $this->values[$field->handle()] = [];
         }
-    }
-
-    protected function sections($form) {
-        $sections = $form->blueprint()->tabs()->first()->sections();
-        if ($this->sections != [])
-            $sections = $sections->filter(fn($s) => in_array($s->display(), $this->sections))->values();
-        return $sections;
     }
 
     protected function fields($form, $sections = null) {
@@ -133,7 +135,6 @@ new class extends Component
         }
         return $validation;
     }
-
 
     public function next() {
         $form = Form::find($this->in);
@@ -207,7 +208,9 @@ new class extends Component
                     $this->tabs = [];
                 }
             }
-            else
+            else if (config('livewire-forms.on-submit'))
+                $this->js(config('livewire-forms.on-submit'));
+            else if ($this->onSubmit)
                 $this->js($this->onSubmit);
 
             if ($this->resetAfterSubmit) {
@@ -233,7 +236,7 @@ new class extends Component
         </x-alert>
     @elseif ($wizard)
         <x-tabs>
-            @foreach ($sections as $index => $section)
+            @foreach (array_filter(array_map(fn($section) => array_first(array_filter($sections, fn($s) => $s['display'] === $section)), $this->sections)) as $index => $section)
             @if ($index > 0)
             <span class="rtl:hidden tab pointer-events-none px-0">&gt;</span>
             <span class="ltr:hidden tab pointer-events-none px-0">&lt;</span>
@@ -246,9 +249,9 @@ new class extends Component
                     <x-render-form :sections="[$section]" :render-hidden="$renderHidden"/>
                     <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
                         @if ($section !== array_last($sections))
-                        <x-button class="btn btn-primary" wire:click.prevent="next">Next</x-button>
+                        <x-button class="btn btn-primary" wire:click.prevent="next">{{ $nextLabel ?? 'Next' }}</x-button>
                         @else
-                        <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
+                        <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submitLabel ?? 'Submit' }}</x-button>
                         @endif
                     </div>
                 </div>
@@ -256,10 +259,10 @@ new class extends Component
             @endforeach
         </x-tabs>
     @else
-        <x-render-form :sections="$sections" :render-hidden="$renderHidden"/>
+        <x-render-form :sections="array_filter(array_map(fn($section) => array_first(array_filter($sections, fn($s) => $s['display'] === $section)), $this->sections))"/>
         
         <div class="bg-base-200 border-1 border-base-300 rounded-lg p-5 col-span-full flex justify-end">
-            <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submit_label ?? 'Submit' }}</x-button>
+            <x-button class="btn btn-primary" wire:click.prevent="submit">{{ $submitLabel ?? 'Submit' }}</x-button>
         </div>
     @endif
 
