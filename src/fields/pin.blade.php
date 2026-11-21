@@ -13,7 +13,6 @@ $required = in_array('required', $validate ?? []) ? 'required' : null;
     :numeric="$mode === 'numeric'"
     :no-gap="!$gaps"
     :value="$value"
-    :placeholder="isset($placeholder) ? $placeholder : null"
     :color="isset($color) ? $color : null"
     :size="isset($size) ? $size : null"
     :required="$required"
